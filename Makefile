@@ -22,6 +22,15 @@ build:
 	@command -v upx > /dev/null && upx --best $(BUILD_DIR)/$(APP_NAME) || echo "UPX not found, skipping compression."
 	@echo "Build done: $(BUILD_DIR)/$(APP_NAME)"
 
+MUSL_TARGET := x86_64-unknown-linux-musl
+.PHONY: musl
+musl:
+	rustup target add $(MUSL_TARGET)
+	cargo build --release --target $(MUSL_TARGET)
+	cp target/$(MUSL_TARGET)/release/$(APP_NAME) $(BUILD_DIR)/$(APP_NAME)-musl
+	@command -v upx > /dev/null && upx --best $(BUILD_DIR)/$(APP_NAME)-musl || echo "UPX not found, skipping compression."
+	@echo "Musl build done: $(BUILD_DIR)/$(APP_NAME)-musl"
+
 .PHONY: test
 test:
 	cargo test -- --nocapture
