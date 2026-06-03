@@ -2,9 +2,8 @@ name: CI
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    tags:
+      - 'v*'
 
 env:
   CARGO_TERM_COLOR: always
@@ -28,10 +27,12 @@ jobs:
             ${{ runner.os }}-cargo-
 
       - name: Show version
-        run: grep '^version' Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/'
+        run: |
+          echo "version: $(grep '^version' Cargo.toml | head -1 | awk '{print $3}' | tr -d '"')"
 
       - name: Show target platform
-        run: rustc -vV | grep host | sed 's/.*: //'
+        run: |
+          echo "target: $(rustc -vV | grep '^host:' | awk '{print $2}')"
 
       - name: Run unit tests
         run: cargo test -- --nocapture
@@ -43,9 +44,16 @@ jobs:
           TARGET=$(rustc -vV | grep host | sed 's/.*: //')
           echo "Building fy ${VERSION} for ${TARGET}"
           mkdir -p build
-          cp target/release/fy "build/fy-${VERSION}-${TARGET}"
+          BIN="build/fy-${VERSION}-${TARGET}"
+          cp target/release/fy "${BIN}"
           ln -sf "fy-${VERSION}-${TARGET}" build/fy
-          echo "Binary: build/fy-${VERSION}-${TARGET}"
+          echo "BIN=${BIN}" >> $GITHUB_ENV
+          echo "Binary: ${BIN}"
 
       - name: Run integration tests
         run: make check
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.BIN }}
