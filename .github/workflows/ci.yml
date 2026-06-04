@@ -31,11 +31,11 @@ jobs:
 
       - name: Show version
         run: |
-          echo "version: $(grep '^version' Cargo.toml | head -1 | awk '{print $3}' | tr -d '"')"
+          echo "version = $(grep '^version' Cargo.toml | head -1 | awk '{print $3}' | tr -d '"')"
 
       - name: Show target platform
         run: |
-          echo "target: $(rustc -vV | grep '^host:' | awk '{print $2}')"
+          echo "target = $(rustc -vV | grep '^host:' | awk '{print $2}')"
 
       - name: Run unit tests
         run: cargo test -- --nocapture
@@ -52,14 +52,14 @@ jobs:
           BIN="build/fy-${VERSION}-${TARGET}"
           cp target/release/fy "${BIN}"
           ln -sf "fy-${VERSION}-${TARGET}" build/fy
-          echo "Built: ${BIN}"
+          echo "Built = ${BIN}"
 
           # musl static build
           rustup target add x86_64-unknown-linux-musl
           cargo build --release --target x86_64-unknown-linux-musl
           MUSL_BIN="build/fy-${VERSION}-x86_64-unknown-linux-musl"
           cp target/x86_64-unknown-linux-musl/release/fy "${MUSL_BIN}"
-          echo "Built: ${MUSL_BIN}"
+          echo "Built = ${MUSL_BIN}"
 
       - name: Run integration tests
         run: make check
@@ -94,7 +94,8 @@ jobs:
             ${{ runner.os }}-cargo-
 
       - name: Show target platform
-        run: echo "target: ${{ matrix.target }}"
+        run: |
+          echo "target = ${{ matrix.target }}"
 
       - name: Run unit tests
         run: cargo test -- --nocapture
@@ -106,7 +107,7 @@ jobs:
           mkdir -p build
           BIN="build/fy-${VERSION}-${{ matrix.target }}"
           cp target/release/fy "${BIN}"
-          echo "Built: ${BIN}"
+          echo "Built = ${BIN}"
 
       - name: Upload release assets
         uses: softprops/action-gh-release@v2
