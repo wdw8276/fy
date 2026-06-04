@@ -70,15 +70,8 @@ jobs:
           files: build/fy-*
 
   macos:
-    name: macOS (${{ matrix.target }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-          - os: macos-13
-            target: x86_64-apple-darwin
-          - os: macos-latest
-            target: aarch64-apple-darwin
+    name: macOS (aarch64-apple-darwin)
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -95,7 +88,7 @@ jobs:
 
       - name: Show target platform
         run: |
-          echo "target = ${{ matrix.target }}"
+          echo "target = aarch64-apple-darwin"
 
       - name: Run unit tests
         run: cargo test -- --nocapture
@@ -105,7 +98,7 @@ jobs:
           VERSION=$(grep '^version' Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/')
           cargo build --release
           mkdir -p build
-          BIN="build/fy-${VERSION}-${{ matrix.target }}"
+          BIN="build/fy-${VERSION}-aarch64-apple-darwin"
           cp target/release/fy "${BIN}"
           echo "Built = ${BIN}"
 

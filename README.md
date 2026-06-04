@@ -14,13 +14,15 @@ make musl && sudo make install-musl    # musl (statically linked, portable)
 ### macOS
 
 ```bash
-make darwin-intel && sudo cp build/fy-darwin-amd64 /usr/local/bin/fy   # Intel Mac
-make darwin-arm64 && sudo cp build/fy-darwin-arm64 /usr/local/bin/fy   # Apple Silicon
+make darwin-arm64 && sudo cp build/fy-darwin-arm64 /usr/local/bin/fy   # Apple Silicon (arm64)
+# make darwin-intel   # Intel Mac (local macOS host only)
 ```
 
 ### Pre-built binaries
 
-Download from [GitHub Releases](https://github.com/wdw8276/fy/releases).
+Download from [GitHub Releases](https://github.com/wdw8276/fy/releases). Release builds include:
+- Linux: glibc + musl (static)
+- macOS: arm64 (Apple Silicon)
 
 ## Usage
 
